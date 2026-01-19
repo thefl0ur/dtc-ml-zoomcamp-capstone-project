@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Diamond Price Predictor Lambda API
+
+Resources:
+  PredictFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Events:
+        PredictApi:
+          Type: Api
+          Properties:
+            Path: /predict
+            Method: post
+      MemorySize: 768
+      Timeout: 30
+      Environment:
+        Variables:
+          MODELS_BUCKET: ml-artifacts
+          MODEL_KEY: model.json
+          PREPROCESSOR_KEY: preprocessor.pkl
+          AWS_ENDPOINT_URL: http://172.20.0.2:31566
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_DEFAULT_REGION: us-east-1
+
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ..
+      DockerTag: v1
+
+Outputs:
+  PredictApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "http://127.0.0.1:3000/predict"
